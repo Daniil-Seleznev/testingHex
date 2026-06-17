@@ -1,0 +1,60 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - source
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+      - run: npm test
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Create publish version
+        run: |
+          cp src/sum.js src/sum.js.bak
+
+          cat > src/sum.js << 'EOF'
+          export default function sum(a, b) {
+            throw new Error('Not implemented');
+          }
+          EOF
+
+      - name: Push to main
+        run: |
+          git checkout main || git checkout -b main
+
+          git checkout source -- .
+
+          cat > src/sum.js << 'EOF'
+          export default function sum(a, b) {
+            throw new Error('Not implemented');
+          }
+          EOF
+
+          git add .
+          git commit -m "Publish task" || true
+          git push origin main

@@ -1,0 +1,10 @@
+{
+    "name": "sum-task",
+    "type": "module",
+    "scripts": {
+      "test": "jest"
+    },
+    "devDependencies": {
+      "jest": "^29.7.0"
+    }
+  }
