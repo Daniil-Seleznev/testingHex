@@ -6,4 +6,5 @@
 
 npm test
 
-![Tests](https://github.com/daniilseleznev/sum-task/actions/workflows/test-and-publish.yml/badge.svg)
+## Прохождение тестов
+![Tests](https://github.com/Daniil-Seleznev/testingHex/actions/workflows/test-and-publish.yml/badge.svg)
