@@ -5,6 +5,9 @@ on:
     branches:
       - source
 
+permissions:
+  contents: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -16,7 +19,7 @@ jobs:
         with:
           node-version: 20
 
-      - run: npm ci
+      - run: npm install
       - run: npm test
 
   publish:
@@ -27,32 +30,31 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure git
+      - name: Configure Git
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Create publish version
+      - name: Publish to main
         run: |
-          cp src/sum.js src/sum.js.bak
+          git fetch origin
 
-          cat > src/sum.js << 'EOF'
-          export default function sum(a, b) {
-            throw new Error('Not implemented');
-          }
-          EOF
-
-      - name: Push to main
-        run: |
-          git checkout main || git checkout -b main
+          if git show-ref --verify --quiet refs/remotes/origin/main; then
+            git checkout main
+          else
+            git checkout -b main
+          fi
 
           git checkout source -- .
 
           cat > src/sum.js << 'EOF'
-          export default function sum(a, b) {
+          function sum(a, b) {
             throw new Error('Not implemented');
           }
+
+          module.exports = sum;
           EOF
 
           git add .
