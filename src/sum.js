@@ -1,3 +1,3 @@
 export default function sum(a, b) {
-    return a + b;
+    throw new Error('Not implemented');
   }
